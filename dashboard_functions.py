@@ -1,7 +1,6 @@
 import redshift_connector
 import pandas as pd
 import os
-import duckdb
 
 os.getenv("mapboxtoken")
 
@@ -23,8 +22,3 @@ def get_dataframe_redshift(query):
     conn.close()
     return df
 
-def get_dataframe_duckdb(query):
-
-    conn = duckdb.connect("C:\\Users\\matti\\Bike Share\\bikes.db")
-    df = conn.sql(query).df()
-    return df

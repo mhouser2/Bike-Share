@@ -6,7 +6,7 @@ import plotly.graph_objects as go
 import dash
 import re
 import os
-from dashboard_functions import get_dataframe_redshift, get_dataframe_duckdb
+from dashboard_functions import get_dataframe_redshift
 
 
 mapboxtoken = os.getenv("mapboxtoken")
@@ -27,7 +27,7 @@ dash.register_page(
 )
 
 
-top_stations_df = get_dataframe_duckdb("SELECT * FROM top_station_by_city")
+top_stations_df = get_dataframe_redshift("SELECT * FROM top_station_by_city")
 
 
 def serve_layout_station_comparison():

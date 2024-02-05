@@ -1,13 +1,12 @@
 from dash import Dash, dash_table, Input, Output, dcc, html, ctx
 import dash_bootstrap_components as dbc
 import pandas as pd
-from sqlalchemy import create_engine
 import dash
 import plotly.express as px
 import os
 import plotly.graph_objects as go
 from plotly.subplots import make_subplots
-from dashboard_functions import get_dataframe_redshift, get_dataframe_duckdb
+from dashboard_functions import get_dataframe_redshift
 
 
 database_url = os.getenv("database_url_bbb")
