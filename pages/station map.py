@@ -97,7 +97,7 @@ def gather_data(city, clickdata, clickdata2):
 
     get_end_stations_query = f"""
             SELECT s.station_name, s.longitude, s.latitude, COUNT(ride_id) number_of_trips, 
-            AVG(CASE WHEN  member_casual = 'member' THEN 1.00 ELSE 0.00 END) percent_member,
+            AVG(CASE WHEN  member_casual = 'member' THEN 1.000 ELSE 0.000 END) *100 percent_member,
             PERCENTILE_CONT(0.5) WITHIN GROUP(ORDER BY t.duration) median_duration
             FROM trips t
             INNER JOIN stations s on t.end_station_id = s.station_id
@@ -115,7 +115,7 @@ def gather_data(city, clickdata, clickdata2):
         "latitude",
         "Number of Trips",
         "Percent Member",
-        "Median Duration",
+        "Median Duration (minutes)",
     ]
 
     explanation_string = f"""
@@ -217,6 +217,19 @@ def gather_data(city, clickdata, clickdata2):
 )
 def main_graph(city):
 
+    query_dates = f"""
+    SELECT min(started_at) earliest_trip, max(started_at) most_recent_trip
+            from trips t
+            left join stations s on s.station_id = t.start_station_id
+            where s.city = '{city}' and started_at < '1/1/2024'
+
+    """
+
+
+    data_dates = get_dataframe_redshift(query_dates)
+    earliest_trip = data_dates['earliest_trip'].iloc[0].strftime('%m/%d/%Y')
+    most_recent_trip =  data_dates['most_recent_trip'].iloc[0].strftime('%m/%d/%Y')
+
     query = f"""
         select s.station_name, s.latitude, s.longitude, n_trips 
             from
@@ -259,7 +272,7 @@ def main_graph(city):
     )
 
     fig.update_layout(
-        title=f"Top stations in {city}",
+        title=f"Top stations in {city}, {earliest_trip} - {most_recent_trip} ",
         font={"size": 16},
         mapbox=dict(
             accesstoken=mapboxtoken,
